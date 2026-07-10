@@ -1,0 +1,193 @@
+[train] step=0 epoch=0 loss=1.4977 pred=0.3576 embed_std=0.001
+[train] step=100 epoch=0 loss=1.1508 pred=0.0677 embed_std=0.001
+[train] step=200 epoch=0 loss=1.1700 pred=0.1042 embed_std=0.000
+[train] step=300 epoch=0 loss=1.1423 pred=0.0775 embed_std=0.000
+[train] step=400 epoch=0 loss=1.1413 pred=0.0811 embed_std=0.000
+[train] step=500 epoch=0 loss=1.1367 pred=0.0872 embed_std=0.001
+[train] step=600 epoch=0 loss=1.1360 pred=0.0776 embed_std=0.010
+[train] step=700 epoch=1 loss=0.7237 pred=0.2092 embed_std=0.756
+[train] step=800 epoch=1 loss=0.5890 pred=0.2417 embed_std=0.893
+[train] step=900 epoch=1 loss=0.5772 pred=0.3295 embed_std=0.950
+[train] step=1000 epoch=1 loss=0.6044 pred=0.3759 embed_std=0.964
+[train] step=1100 epoch=1 loss=0.5998 pred=0.3576 embed_std=0.965
+[train] step=1200 epoch=1 loss=0.5734 pred=0.3684 embed_std=0.970
+[train] step=1300 epoch=1 loss=0.5942 pred=0.3858 embed_std=0.971
+[train] step=1400 epoch=2 loss=0.6213 pred=0.4041 embed_std=0.965
+[train] step=1500 epoch=2 loss=0.5965 pred=0.4079 embed_std=0.969
+[train] step=1600 epoch=2 loss=0.6279 pred=0.4134 embed_std=0.976
+[train] step=1700 epoch=2 loss=0.5483 pred=0.3324 embed_std=0.965
+[train] step=1800 epoch=2 loss=0.5603 pred=0.3488 embed_std=0.971
+[train] step=1900 epoch=2 loss=0.5736 pred=0.3674 embed_std=0.957
+[train] step=2000 epoch=3 loss=0.5968 pred=0.3860 embed_std=0.966
+[train] step=2100 epoch=3 loss=0.5967 pred=0.3686 embed_std=0.962
+[train] step=2200 epoch=3 loss=0.5323 pred=0.3449 embed_std=0.963
+[train] step=2300 epoch=3 loss=0.5304 pred=0.3507 embed_std=0.973
+[train] step=2400 epoch=3 loss=0.5518 pred=0.3684 embed_std=0.966
+[train] step=2500 epoch=3 loss=0.5346 pred=0.3534 embed_std=0.974
+[train] step=2600 epoch=3 loss=0.4685 pred=0.2973 embed_std=0.977
+[train] step=2700 epoch=4 loss=0.5014 pred=0.3363 embed_std=0.974
+[train] step=2800 epoch=4 loss=0.4478 pred=0.2747 embed_std=0.978
+[train] step=2900 epoch=4 loss=0.4446 pred=0.2861 embed_std=0.971
+[train] step=3000 epoch=4 loss=0.4028 pred=0.2343 embed_std=0.975
+[train] step=3100 epoch=4 loss=0.3999 pred=0.2439 embed_std=0.976
+[train] step=3200 epoch=4 loss=0.3856 pred=0.2243 embed_std=0.974
+[train] step=3300 epoch=5 loss=0.3627 pred=0.2174 embed_std=0.979
+[train] step=3400 epoch=5 loss=0.3856 pred=0.2188 embed_std=0.974
+[train] step=3500 epoch=5 loss=0.3648 pred=0.2115 embed_std=0.976
+[train] step=3600 epoch=5 loss=0.3567 pred=0.2053 embed_std=0.973
+[train] step=3700 epoch=5 loss=0.3484 pred=0.1952 embed_std=0.974
+[train] step=3800 epoch=5 loss=0.3436 pred=0.1857 embed_std=0.983
+[train] step=3900 epoch=5 loss=0.3086 pred=0.1586 embed_std=0.977
+[train] step=4000 epoch=6 loss=0.3381 pred=0.2002 embed_std=0.982
+[train] step=4100 epoch=6 loss=0.3086 pred=0.1625 embed_std=0.981
+[train] step=4200 epoch=6 loss=0.3239 pred=0.1769 embed_std=0.979
+[train] step=4300 epoch=6 loss=0.2957 pred=0.1582 embed_std=0.984
+[train] step=4400 epoch=6 loss=0.3034 pred=0.1539 embed_std=0.980
+[train] step=4500 epoch=6 loss=0.2920 pred=0.1467 embed_std=0.977
+[train] step=4600 epoch=7 loss=0.3100 pred=0.1656 embed_std=0.983
+[train] step=4700 epoch=7 loss=0.2970 pred=0.1649 embed_std=0.984
+[train] step=4800 epoch=7 loss=0.2602 pred=0.1267 embed_std=0.983
+[train] step=4900 epoch=7 loss=0.2984 pred=0.1574 embed_std=0.984
+[train] step=5000 epoch=7 loss=0.2716 pred=0.1411 embed_std=0.983
+[train] step=5100 epoch=7 loss=0.2700 pred=0.1368 embed_std=0.986
+[train] step=5200 epoch=7 loss=0.2738 pred=0.1294 embed_std=0.983
+[train] step=5300 epoch=8 loss=0.2712 pred=0.1313 embed_std=0.984
+[train] step=5400 epoch=8 loss=0.2834 pred=0.1495 embed_std=0.983
+[train] step=5500 epoch=8 loss=0.2953 pred=0.1587 embed_std=0.984
+[train] step=5600 epoch=8 loss=0.2731 pred=0.1356 embed_std=0.985
+[train] step=5700 epoch=8 loss=0.2561 pred=0.1220 embed_std=0.985
+[train] step=5800 epoch=8 loss=0.2504 pred=0.1212 embed_std=0.987
+[train] step=5900 epoch=8 loss=0.2482 pred=0.1145 embed_std=0.984
+[train] step=6000 epoch=9 loss=0.2941 pred=0.1532 embed_std=0.984
+[train] step=6100 epoch=9 loss=0.2460 pred=0.1198 embed_std=0.985
+[train] step=6200 epoch=9 loss=0.2495 pred=0.1173 embed_std=0.986
+[train] step=6300 epoch=9 loss=0.2689 pred=0.1336 embed_std=0.983
+[train] step=6400 epoch=9 loss=0.2454 pred=0.1178 embed_std=0.987
+[train] step=6500 epoch=9 loss=0.2728 pred=0.1292 embed_std=0.980
+[train] step=6600 epoch=10 loss=0.2592 pred=0.1181 embed_std=0.987
+[train] step=6700 epoch=10 loss=0.2634 pred=0.1412 embed_std=0.990
+[train] step=6800 epoch=10 loss=0.2285 pred=0.1132 embed_std=0.988
+[train] step=6900 epoch=10 loss=0.2422 pred=0.1183 embed_std=0.988
+[train] step=7000 epoch=10 loss=0.2517 pred=0.1269 embed_std=0.990
+[train] step=7100 epoch=10 loss=0.2434 pred=0.1051 embed_std=0.986
+[train] step=7200 epoch=10 loss=0.2173 pred=0.1013 embed_std=0.988
+[train] step=7300 epoch=11 loss=0.2479 pred=0.1178 embed_std=0.989
+[train] step=7400 epoch=11 loss=0.2405 pred=0.1212 embed_std=0.989
+[train] step=7500 epoch=11 loss=0.2465 pred=0.1156 embed_std=0.986
+[train] step=7600 epoch=11 loss=0.2326 pred=0.1027 embed_std=0.986
+[train] step=7700 epoch=11 loss=0.2483 pred=0.1136 embed_std=0.986
+[train] step=7800 epoch=11 loss=0.2487 pred=0.1098 embed_std=0.985
+{
+  "checkpoint": "runs/base_l0.pt",
+  "steps": 7872,
+  "final": {
+    "step": 7800,
+    "epoch": 11,
+    "loss": 0.24872,
+    "pred_loss": 0.10976,
+    "var_loss": 0.03265,
+    "cov_loss": 2.49025,
+    "motion_loss": 0.0067,
+    "embed_std": 0.98524,
+    "elapsed_s": 215.5
+  },
+  "elapsed_s": 217.2
+}
+[train] step=0 epoch=0 loss=1.4964 pred=0.3559 embed_std=0.001
+[train] step=100 epoch=1 loss=1.1526 pred=0.0691 embed_std=0.001
+[train] step=200 epoch=3 loss=1.2055 pred=0.1404 embed_std=0.000
+[train] step=300 epoch=4 loss=1.1500 pred=0.0953 embed_std=0.000
+[train] step=400 epoch=6 loss=1.1416 pred=0.0910 embed_std=0.000
+[train] step=500 epoch=7 loss=1.1398 pred=0.0916 embed_std=0.001
+[train] step=600 epoch=9 loss=1.1398 pred=0.0983 embed_std=0.001
+[train] step=700 epoch=10 loss=1.1365 pred=0.0977 embed_std=0.001
+[train] step=800 epoch=12 loss=1.1362 pred=0.1154 embed_std=0.001
+[train] step=900 epoch=13 loss=1.1295 pred=0.1135 embed_std=0.006
+[train] step=1000 epoch=15 loss=0.6411 pred=0.2447 embed_std=0.811
+[train] step=1100 epoch=16 loss=0.6420 pred=0.3504 embed_std=0.919
+[train] step=1200 epoch=18 loss=0.6107 pred=0.3537 embed_std=0.960
+[train] step=1300 epoch=20 loss=0.5671 pred=0.3385 embed_std=0.956
+[train] step=1400 epoch=21 loss=0.5919 pred=0.3842 embed_std=0.972
+[train] step=1500 epoch=23 loss=0.6004 pred=0.3632 embed_std=0.961
+[train] step=1600 epoch=24 loss=0.5953 pred=0.3773 embed_std=0.967
+[train] step=1700 epoch=26 loss=0.5456 pred=0.3594 embed_std=0.977
+[train] step=1800 epoch=27 loss=0.5635 pred=0.3690 embed_std=0.974
+[train] step=1900 epoch=29 loss=0.5349 pred=0.3631 embed_std=0.976
+[train] step=2000 epoch=30 loss=0.5378 pred=0.3454 embed_std=0.976
+[train] step=2100 epoch=32 loss=0.4741 pred=0.3070 embed_std=0.975
+[train] step=2200 epoch=33 loss=0.4742 pred=0.2975 embed_std=0.973
+[train] step=2300 epoch=35 loss=0.5208 pred=0.3239 embed_std=0.970
+[train] step=2400 epoch=36 loss=0.4400 pred=0.2791 embed_std=0.978
+[train] step=2500 epoch=38 loss=0.4611 pred=0.2951 embed_std=0.971
+{
+  "checkpoint": "runs/base_l0_lowdata.pt",
+  "steps": 2600,
+  "final": {
+    "step": 2500,
+    "epoch": 38,
+    "loss": 0.46111,
+    "pred_loss": 0.29508,
+    "var_loss": 0.04645,
+    "cov_loss": 2.90964,
+    "motion_loss": 0.00319,
+    "embed_std": 0.97093,
+    "elapsed_s": 59.8
+  },
+  "elapsed_s": 62.2
+}
+[eval]        default frozen:  80.0% +/- 6.7 (8.4s)
+[eval]        default  adapt: 100.0% +/- 0.0 (8.0s)
+[eval]       low_mass frozen: 100.0% +/- 0.0 (4.9s)
+[eval]       low_mass  adapt:  96.7% +/- 3.3 (6.4s)
+[eval]   high_damping frozen:  56.7% +/- 10.0 (19.0s)
+[eval]   high_damping  adapt:  83.3% +/- 3.3 (21.2s)
+[eval]           blur frozen:  96.7% +/- 3.3 (5.4s)
+[eval]           blur  adapt:  90.0% +/- 10.0 (10.2s)
+[eval]            snp frozen:  90.0% +/- 3.3 (7.6s)
+[eval]            snp  adapt:  93.3% +/- 6.7 (9.2s)
+[eval]           dark frozen:  76.7% +/- 3.3 (8.8s)
+[eval]           dark  adapt:  86.7% +/- 6.7 (8.6s)
+[eval]      red_agent frozen:   3.3% +/- 3.3 (21.3s)
+[eval]      red_agent  adapt:  16.7% +/- 3.3 (28.3s)
+wrote runs/suite_cem.json
+[eval]       layout:0 frozen:  66.7% +/- 6.7 (12.0s)
+[eval]       layout:0  adapt:  70.0% +/- 3.3 (15.7s)
+[eval]     layout:100 frozen:  40.0% +/- 6.7 (15.0s)
+[eval]     layout:100  adapt:  40.0% +/- 6.7 (20.8s)
+[eval]     layout:101 frozen:  36.7% +/- 3.3 (16.3s)
+[eval]     layout:101  adapt:  53.3% +/- 13.3 (22.2s)
+[eval]     layout:102 frozen:  30.0% +/- 3.3 (17.6s)
+[eval]     layout:102  adapt:  43.3% +/- 3.3 (22.2s)
+wrote runs/suite_layout.json
+[eval]        default frozen:  80.0% +/- 0.0 (10.6s)
+[eval]        default  adapt:  76.7% +/- 3.3 (15.5s)
+[eval]   high_damping frozen:  30.0% +/- 3.3 (20.0s)
+[eval]   high_damping  adapt:  30.0% +/- 3.3 (26.0s)
+[eval]      red_agent frozen:  10.0% +/- 3.3 (21.6s)
+[eval]      red_agent  adapt:  26.7% +/- 0.0 (25.0s)
+wrote runs/suite_lowdata.json
+[sweep]                       frozen:   0.0% +/- 0.0
+[sweep]        predlast+enclast@x0.2:   0.0% +/- 0.0
+[sweep]          predlast+enclast@x1:  20.0% +/- 0.0
+[sweep]          predlast+enclast@x5:  30.0% +/- 0.0
+[sweep]       predfirst+enclast@x0.2:  10.0% +/- 0.0
+[sweep]         predfirst+enclast@x1:   0.0% +/- 0.0
+[sweep]         predfirst+enclast@x5:  10.0% +/- 0.0
+[sweep]                predlast@x0.2:   0.0% +/- 0.0
+[sweep]                  predlast@x1:  20.0% +/- 0.0
+[sweep]                  predlast@x5:  10.0% +/- 0.0
+[sweep]                 enclast@x0.2:   0.0% +/- 0.0
+[sweep]                   enclast@x1:   0.0% +/- 0.0
+[sweep]                   enclast@x5:   0.0% +/- 0.0
+[sweep]                     all@x0.2:   0.0% +/- 0.0
+[sweep]                       all@x1:  50.0% +/- 0.0
+[sweep]                       all@x5:  20.0% +/- 0.0
+wrote runs/ablation_red_agent.json
+[eval]        default frozen:  80.0% +/- 0.0 (57.1s)
+[eval]        default  adapt:  60.0% +/- 0.0 (53.1s)
+[eval]   high_damping frozen:  10.0% +/- 0.0 (109.5s)
+[eval]   high_damping  adapt:  10.0% +/- 0.0 (93.8s)
+[eval]      red_agent frozen:   0.0% +/- 0.0 (118.9s)
+[eval]      red_agent  adapt:  30.0% +/- 0.0 (89.4s)
+wrote runs/suite_gd.json
+ALL_DONE_V2

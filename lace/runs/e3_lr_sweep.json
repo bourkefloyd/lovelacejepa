@@ -1,0 +1,127 @@
+{
+  "enc_lrs": [
+    1e-05,
+    0.0001,
+    0.0003,
+    0.001
+  ],
+  "shift": "high_damping",
+  "cells": {
+    "student": [
+      {
+        "success_rate": 66.67,
+        "success_std": 0.0,
+        "per_seed": [
+          66.66666666666667
+        ],
+        "goal_drift_final_mean": 0.1463,
+        "probes": {
+          "n_steps": 361,
+          "success_auc": 0.9684,
+          "progress_corr": 0.9675,
+          "state_err": 0.1523
+        }
+      },
+      {
+        "success_rate": 86.67,
+        "success_std": 0.0,
+        "per_seed": [
+          86.66666666666667
+        ],
+        "goal_drift_final_mean": 0.8555,
+        "probes": {
+          "n_steps": 313,
+          "success_auc": 0.9705,
+          "progress_corr": 0.9644,
+          "state_err": 0.1888
+        }
+      },
+      {
+        "success_rate": 80.0,
+        "success_std": 0.0,
+        "per_seed": [
+          80.0
+        ],
+        "goal_drift_final_mean": 1.7372,
+        "probes": {
+          "n_steps": 291,
+          "success_auc": 0.9803,
+          "progress_corr": 0.9562,
+          "state_err": 0.313
+        }
+      },
+      {
+        "success_rate": 33.33,
+        "success_std": 0.0,
+        "per_seed": [
+          33.333333333333336
+        ],
+        "goal_drift_final_mean": 5.4564,
+        "probes": {
+          "n_steps": 402,
+          "success_auc": 0.9909,
+          "progress_corr": 0.7572,
+          "state_err": 0.6745
+        }
+      }
+    ],
+    "frozen": [
+      {
+        "success_rate": 73.33,
+        "success_std": 0.0,
+        "per_seed": [
+          73.33333333333333
+        ],
+        "goal_drift_final_mean": 0.0,
+        "probes": {
+          "n_steps": 345,
+          "success_auc": 0.9695,
+          "progress_corr": 0.9673,
+          "state_err": 0.156
+        }
+      },
+      {
+        "success_rate": 73.33,
+        "success_std": 0.0,
+        "per_seed": [
+          73.33333333333333
+        ],
+        "goal_drift_final_mean": 0.0,
+        "probes": {
+          "n_steps": 332,
+          "success_auc": 0.9731,
+          "progress_corr": 0.9752,
+          "state_err": 0.1871
+        }
+      },
+      {
+        "success_rate": 66.67,
+        "success_std": 0.0,
+        "per_seed": [
+          66.66666666666667
+        ],
+        "goal_drift_final_mean": 0.0,
+        "probes": {
+          "n_steps": 327,
+          "success_auc": 0.9782,
+          "progress_corr": 0.9532,
+          "state_err": 0.2348
+        }
+      },
+      {
+        "success_rate": 86.67,
+        "success_std": 0.0,
+        "per_seed": [
+          86.66666666666667
+        ],
+        "goal_drift_final_mean": 0.0,
+        "probes": {
+          "n_steps": 289,
+          "success_auc": 0.9802,
+          "progress_corr": 0.9406,
+          "state_err": 0.3254
+        }
+      }
+    ]
+  }
+}

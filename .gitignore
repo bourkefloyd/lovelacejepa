@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+# Generated datasets: reproducible via `adajepa.cli gen-data` (see adajepa/README.md)
+adajepa/data/*.npz
+# LaTeX build intermediates
+lace/paper/*.aux
+lace/paper/*.log
+lace/paper/*.out
+lace/paper/*.blg
+lace/paper/*.bcf
+lace/paper/*.run.xml

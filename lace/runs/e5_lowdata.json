@@ -1,0 +1,109 @@
+{
+  "budgets": [
+    1,
+    2,
+    4
+  ],
+  "unseen": [
+    "shape:I",
+    "shape:cube"
+  ],
+  "cells": {
+    "frozen": [
+      {
+        "success_rate": 20.0,
+        "per_shift": {
+          "shape:I": 30.0,
+          "shape:cube": 10.0
+        },
+        "probes": {
+          "success_auc": 0.6746
+        }
+      },
+      {
+        "success_rate": 15.0,
+        "per_shift": {
+          "shape:I": 10.0,
+          "shape:cube": 20.0
+        },
+        "probes": {
+          "success_auc": 0.8426
+        }
+      },
+      {
+        "success_rate": 10.0,
+        "per_shift": {
+          "shape:I": 20.0,
+          "shape:cube": 0.0
+        },
+        "probes": {
+          "success_auc": 0.9601
+        }
+      }
+    ],
+    "unlaced": [
+      {
+        "success_rate": 20.0,
+        "per_shift": {
+          "shape:I": 20.0,
+          "shape:cube": 20.0
+        },
+        "probes": {
+          "success_auc": 0.9504
+        }
+      },
+      {
+        "success_rate": 25.0,
+        "per_shift": {
+          "shape:I": 10.0,
+          "shape:cube": 40.0
+        },
+        "probes": {
+          "success_auc": 0.9733
+        }
+      },
+      {
+        "success_rate": 10.0,
+        "per_shift": {
+          "shape:I": 10.0,
+          "shape:cube": 10.0
+        },
+        "probes": {
+          "success_auc": 0.9549
+        }
+      }
+    ],
+    "laced-frozen": [
+      {
+        "success_rate": 15.0,
+        "per_shift": {
+          "shape:I": 20.0,
+          "shape:cube": 10.0
+        },
+        "probes": {
+          "success_auc": 0.8984
+        }
+      },
+      {
+        "success_rate": 20.0,
+        "per_shift": {
+          "shape:I": 10.0,
+          "shape:cube": 30.0
+        },
+        "probes": {
+          "success_auc": 0.9235
+        }
+      },
+      {
+        "success_rate": 10.0,
+        "per_shift": {
+          "shape:I": 20.0,
+          "shape:cube": 0.0
+        },
+        "probes": {
+          "success_auc": 0.9072
+        }
+      }
+    ]
+  }
+}

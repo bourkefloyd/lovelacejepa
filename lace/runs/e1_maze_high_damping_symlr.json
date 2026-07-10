@@ -1,0 +1,75 @@
+{
+  "shift": "high_damping",
+  "arms": {
+    "frozen": {
+      "success_rate": 56.67,
+      "success_std": 10.0,
+      "per_seed": [
+        46.666666666666664,
+        66.66666666666667
+      ],
+      "probes": {
+        "n_steps": 736,
+        "success_auc": 0.9647,
+        "progress_corr": 0.9488,
+        "state_err": 0.1736
+      }
+    },
+    "student:predlast+enclast@x1": {
+      "success_rate": 76.67,
+      "success_std": 3.33,
+      "per_seed": [
+        80.0,
+        73.33333333333333
+      ],
+      "probes": {
+        "n_steps": 623,
+        "success_auc": 0.9773,
+        "progress_corr": 0.9044,
+        "state_err": 0.3026
+      }
+    },
+    "student:predlast+enclast@x0.2": {
+      "success_rate": 70.0,
+      "success_std": 16.67,
+      "per_seed": [
+        86.66666666666667,
+        53.333333333333336
+      ],
+      "probes": {
+        "n_steps": 670,
+        "success_auc": 0.9716,
+        "progress_corr": 0.9125,
+        "state_err": 0.2101
+      }
+    },
+    "frozen:predlast+enclast@x1": {
+      "success_rate": 76.67,
+      "success_std": 10.0,
+      "per_seed": [
+        66.66666666666667,
+        86.66666666666667
+      ],
+      "probes": {
+        "n_steps": 645,
+        "success_auc": 0.9793,
+        "progress_corr": 0.913,
+        "state_err": 0.2357
+      }
+    },
+    "frozen:predlast+enclast@x0.2": {
+      "success_rate": 60.0,
+      "success_std": 6.67,
+      "per_seed": [
+        66.66666666666667,
+        53.333333333333336
+      ],
+      "probes": {
+        "n_steps": 691,
+        "success_auc": 0.9797,
+        "progress_corr": 0.9066,
+        "state_err": 0.2091
+      }
+    }
+  }
+}

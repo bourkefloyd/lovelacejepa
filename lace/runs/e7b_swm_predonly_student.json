@@ -1,0 +1,53 @@
+{
+  "n_steps": 5434,
+  "n_runs": 110,
+  "all": {
+    "n": 5434,
+    "frozen_div": 0.5211180538949576,
+    "adapted_div": 0.3553252005857067,
+    "div_reduction_pct": 31.814835826561083,
+    "frozen_top1": 0.6456058561321719,
+    "adapted_top1": 0.5973909131803868,
+    "frozen_mrr": 0.7495549771865562,
+    "adapted_mrr": 0.720498361287835
+  },
+  "first_half": {
+    "n": 2743,
+    "frozen_div": 0.5320873627703293,
+    "adapted_div": 0.42027975728795086,
+    "div_reduction_pct": 21.013016528009366,
+    "frozen_top1": 0.6781706971280431,
+    "adapted_top1": 0.6584842224652651,
+    "frozen_mrr": 0.7730854585119987,
+    "adapted_mrr": 0.7630746951837
+  },
+  "second_half": {
+    "n": 2691,
+    "frozen_div": 0.5099367776983226,
+    "adapted_div": 0.28911548336747717,
+    "div_reduction_pct": 43.30366115728228,
+    "frozen_top1": 0.6124117428465254,
+    "adapted_top1": 0.5351170568561873,
+    "frozen_mrr": 0.7255698005698006,
+    "adapted_mrr": 0.6770992963021949
+  },
+  "frozen_progress_auc": 0.898783627120132,
+  "adapted_progress_auc": 0.8592274637941228,
+  "frozen_success_auc": 0.9325433515141978,
+  "adapted_success_auc": 0.8404260478244819,
+  "frozen_progress_auc_enc": 0.7135975693198279,
+  "adapted_progress_auc_enc": 0.7135975693198279,
+  "frozen_success_auc_enc": 0.6947981152074965,
+  "adapted_success_auc_enc": 0.6947981152074965,
+  "config": {
+    "ckpt": "lab/.cache/swm/latest.pt",
+    "adapt_lr": 0.0003,
+    "adapt_steps": 1,
+    "buffer_size": 5,
+    "adapt_target": "predlast",
+    "target_source": "student",
+    "ema_decay": 0.996,
+    "negatives": 8,
+    "seed": 0
+  }
+}

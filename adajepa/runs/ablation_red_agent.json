@@ -1,0 +1,117 @@
+{
+  "shift": "red_agent",
+  "arms": {
+    "frozen": {
+      "success_rate": 0.0,
+      "success_std": 0.0,
+      "per_seed": [
+        0.0
+      ]
+    },
+    "predlast+enclast@x0.2": {
+      "success_rate": 0.0,
+      "success_std": 0.0,
+      "per_seed": [
+        0.0
+      ]
+    },
+    "predlast+enclast@x1": {
+      "success_rate": 20.0,
+      "success_std": 0.0,
+      "per_seed": [
+        20.0
+      ]
+    },
+    "predlast+enclast@x5": {
+      "success_rate": 30.0,
+      "success_std": 0.0,
+      "per_seed": [
+        30.0
+      ]
+    },
+    "predfirst+enclast@x0.2": {
+      "success_rate": 10.0,
+      "success_std": 0.0,
+      "per_seed": [
+        10.0
+      ]
+    },
+    "predfirst+enclast@x1": {
+      "success_rate": 0.0,
+      "success_std": 0.0,
+      "per_seed": [
+        0.0
+      ]
+    },
+    "predfirst+enclast@x5": {
+      "success_rate": 10.0,
+      "success_std": 0.0,
+      "per_seed": [
+        10.0
+      ]
+    },
+    "predlast@x0.2": {
+      "success_rate": 0.0,
+      "success_std": 0.0,
+      "per_seed": [
+        0.0
+      ]
+    },
+    "predlast@x1": {
+      "success_rate": 20.0,
+      "success_std": 0.0,
+      "per_seed": [
+        20.0
+      ]
+    },
+    "predlast@x5": {
+      "success_rate": 10.0,
+      "success_std": 0.0,
+      "per_seed": [
+        10.0
+      ]
+    },
+    "enclast@x0.2": {
+      "success_rate": 0.0,
+      "success_std": 0.0,
+      "per_seed": [
+        0.0
+      ]
+    },
+    "enclast@x1": {
+      "success_rate": 0.0,
+      "success_std": 0.0,
+      "per_seed": [
+        0.0
+      ]
+    },
+    "enclast@x5": {
+      "success_rate": 0.0,
+      "success_std": 0.0,
+      "per_seed": [
+        0.0
+      ]
+    },
+    "all@x0.2": {
+      "success_rate": 0.0,
+      "success_std": 0.0,
+      "per_seed": [
+        0.0
+      ]
+    },
+    "all@x1": {
+      "success_rate": 50.0,
+      "success_std": 0.0,
+      "per_seed": [
+        50.0
+      ]
+    },
+    "all@x5": {
+      "success_rate": 20.0,
+      "success_std": 0.0,
+      "per_seed": [
+        20.0
+      ]
+    }
+  }
+}
