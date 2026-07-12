@@ -1,4 +1,4 @@
-"""Generate every LovelaceJEPA paper figure from the run JSONs.
+"""Generate every LACE paper figure from the run JSONs.
 
 Usage (from lace/):
 
@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -25,6 +26,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 RUNS = ROOT / "runs"
 OUT = ROOT / "paper" / "figures"
+sys.path.insert(0, str(ROOT.parent / "adajepa"))  # for adajepa.env (numpy-only)
 
 ARM_COLORS = {
     "frozen": "#8a8a8a",
@@ -66,6 +68,74 @@ def _style(ax, title: str = "") -> None:
     ax.grid(axis="y", alpha=0.25, lw=0.6)
     if title:
         ax.set_title(title, fontsize=10)
+
+
+def _fig_legend(fig, handles, labels, *, ncol: int, y: float = 0.92) -> None:
+    """One shared legend centered above the panels (readable at print size)."""
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, y),
+               ncol=ncol, fontsize=9, frameon=False, columnspacing=1.4,
+               handlelength=1.6)
+
+
+# ---------------------------------------------------------------------------
+# Fig (hook): one dark-shift episode, all three arms on the identical task.
+# ---------------------------------------------------------------------------
+
+
+def fig_hook(shift: str = "dark", ep_idx: int = 6) -> None:
+    """Walkthrough: frozen fails, unlaced drifts its goal and fails, LACE
+    succeeds -- same maze, same start, same goal observation."""
+    data = _load("e2_maze_cem.json")
+    if data is None:
+        return
+    from adajepa.env import EnvConfig, PointMazeEnv, make_shift_config
+
+    env_cfg = make_shift_config(EnvConfig(**data["env"]), shift)
+    env = PointMazeEnv(env_cfg)
+    cell_px = env_cfg.img_size / env_cfg.grid
+
+    arms = ["frozen", "unlaced", "laced-frozen"]
+    titles = {
+        "frozen": "frozen: no adaptation",
+        "unlaced": "unlaced (AdaJEPA)",
+        "laced-frozen": "LACE (frozen anchor)",
+    }
+    eps = {arm: data["shifts"][shift][arm]["episodes"][ep_idx] for arm in arms}
+    goal = np.asarray(eps["frozen"]["goal"])
+
+    fig, axes = plt.subplots(1, 4, figsize=(11.2, 2.9),
+                             gridspec_kw={"width_ratios": [1, 1, 1, 1.55]})
+    for ax, arm in zip(axes[:3], arms):
+        ep = eps[arm]
+        pos = np.asarray(ep["positions"])
+        env.pos = pos[-1].astype(float)
+        frame = env.render_frame()
+        ax.imshow(frame)
+        ax.plot(pos[:, 1] * cell_px, pos[:, 0] * cell_px,
+                color=ARM_COLORS[arm], lw=1.8, alpha=0.95)
+        ax.plot(pos[0, 1] * cell_px, pos[0, 0] * cell_px, "o", ms=6,
+                mfc="white", mec="black", mew=1.0)
+        ax.plot(goal[1] * cell_px, goal[0] * cell_px, "*", ms=13,
+                mfc="gold", mec="black", mew=0.8)
+        outcome = "success" if ep["success"] else "failure"
+        ax.set_title(f"{titles[arm]}\n{outcome}", fontsize=9.5,
+                     color=ARM_COLORS[arm])
+        ax.set_xticks([]), ax.set_yticks([])
+        for s in ax.spines.values():
+            s.set_visible(False)
+
+    ax = axes[3]
+    for arm in arms:
+        gd = eps[arm]["goal_drift"]
+        ls = "--" if arm == "frozen" else "-"
+        ax.plot(np.arange(1, len(gd) + 1), gd, ls, color=ARM_COLORS[arm],
+                lw=2.0, label=ARM_LABELS[arm])
+    ax.set_xlabel("MPC replanning step", fontsize=9)
+    ax.set_ylabel(r"goal-latent drift $\|z_g^{(t)}-z_g^{(0)}\|$", fontsize=9)
+    _style(ax, "same goal image, re-encoded each step")
+    ax.legend(fontsize=8, frameon=False, loc="upper left")
+    fig.tight_layout()
+    _save(fig, "hook_episode")
 
 
 # ---------------------------------------------------------------------------
@@ -113,9 +183,10 @@ def fig_e1() -> None:
     for ax in axes:
         ax.set_xticks(x, labels, fontsize=7.5)
         _style(ax)
-    axes[0].legend(fontsize=7.5, frameon=False)
+    handles, hlabels = axes[0].get_legend_handles_labels()
     fig.suptitle("PointMaze high-damping shift: adaptation recipes x target source",
-                 fontsize=11)
+                 fontsize=11, y=1.14)
+    _fig_legend(fig, handles, hlabels, ncol=3, y=1.06)
     _save(fig, "e1_maze_grid")
 
     if sym is not None:
@@ -165,12 +236,13 @@ def _suite_bars(data: dict, name: str, shifts: list[str], title: str,
     labels = shift_labels or [s.replace("shape:", "") for s in shifts]
     for ax, ylab in ((axes[0], "Planning success (%)"),
                      (axes[1], "Frozen success-head AUC")):
-        ax.set_xticks(x, labels, fontsize=8)
+        ax.set_xticks(x, labels, fontsize=8, rotation=18, ha="right")
         ax.set_ylabel(ylab)
         _style(ax)
     axes[1].set_ylim(0.4, 1.02)
-    axes[0].legend(fontsize=7.5, frameon=False)
-    fig.suptitle(title, fontsize=11)
+    handles, hlabels = axes[0].get_legend_handles_labels()
+    fig.suptitle(title, fontsize=11, y=1.16)
+    _fig_legend(fig, handles, hlabels, ncol=len(arms), y=1.07)
     _save(fig, name)
 
 
@@ -242,6 +314,15 @@ def fig_e3() -> None:
         return
     fig, axes = plt.subplots(1, 2, figsize=(8.4, 3.0))
     lrs = data["enc_lrs"]
+    # Frozen baseline for the same shift/checkpoint (E3 sweeps adaptation
+    # arms only, so the no-TTA reference comes from the E1 grid).
+    ref = _load("e1_maze_high_damping.json")
+    if ref is not None:
+        frozen = ref["arms"]["frozen"]
+        axes[0].axhline(frozen["success_rate"], color="k", ls="--", lw=1.2,
+                        label="Frozen model (no TTA)")
+        axes[1].axhline(frozen["probes"]["success_auc"], color="k", ls="--",
+                        lw=1.2)
     for source, color in (("student", ARM_COLORS["unlaced"]),
                           ("frozen", ARM_COLORS["laced-frozen"])):
         rows = data["cells"][source]
@@ -254,8 +335,10 @@ def fig_e3() -> None:
         _style(ax)
     axes[0].set_ylabel("Planning success (%)")
     axes[1].set_ylabel("Frozen success-head AUC")
-    axes[0].legend(fontsize=7.5, frameon=False)
-    fig.suptitle("E3: symmetric-LR safety (high_damping shift)", fontsize=11)
+    handles, hlabels = axes[0].get_legend_handles_labels()
+    fig.suptitle("E3: symmetric-LR safety (high_damping shift)", fontsize=11,
+                 y=1.14)
+    _fig_legend(fig, handles, hlabels, ncol=3, y=1.06)
     _save(fig, "e3_lr_sweep")
 
 
@@ -309,10 +392,10 @@ def fig_e5() -> None:
         rows = data["cells"][arm]
         ax.plot(budgets, [r["success_rate"] for r in rows], "o-",
                 color=ARM_COLORS.get(arm), label=ARM_LABELS.get(arm, arm), lw=1.8)
-    ax.set_xscale("log")
-    ax.set_xlabel("Pretraining trajectories")
+    ax.set_xticks(budgets, [str(b) for b in budgets])
+    ax.set_xlabel("Pretraining shape diversity $K$")
     ax.set_ylabel("Planning success (%)")
-    _style(ax, "E5: low-data regime (unseen shapes)")
+    _style(ax, "E5: low-data pretraining (unseen shapes)")
     ax.legend(fontsize=7.5, frameon=False)
     _save(fig, "e5_lowdata")
 
@@ -429,6 +512,7 @@ def fig_e7b() -> None:
 
 
 FAMILIES = {
+    "hook": fig_hook,
     "e1": fig_e1,
     "e2": fig_e2,
     "e3": fig_e3,

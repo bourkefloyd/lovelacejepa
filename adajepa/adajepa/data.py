@@ -30,15 +30,74 @@ class DataConfig:
     max_retries: int = 8
 
 
+def _alloc_trajectory_arrays(
+    n: int, t: int, img_size: int, state_dim: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Shared array layout for every generator: frames/actions/positions."""
+    frames = np.zeros((n, t + 1, img_size, img_size, 3), dtype=np.uint8)
+    actions = np.zeros((n, t, 2), dtype=np.float32)
+    positions = np.zeros((n, t + 1, state_dim), dtype=np.float32)
+    return frames, actions, positions
+
+
+def _roll_trajectory(
+    env, t: int, rng: np.random.Generator, action_fn, init_state
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Roll one trajectory on an already-reset env.
+
+    ``action_fn(a)`` maps the previous action to the next one (the exploration
+    policy). Returns ``(frames (t+1, ...), actions (t, 2), states (t+1, d))``.
+    """
+    frames = [env.render_frame()]
+    states = [np.asarray(init_state, dtype=np.float32)]
+    actions = np.zeros((t, 2), dtype=np.float32)
+    a = rng.uniform(-1, 1, size=2)
+    for k in range(t):
+        a = action_fn(a)
+        _, info = env.step(a)
+        actions[k] = a
+        frames.append(info.frame)
+        states.append(np.asarray(info.pos, dtype=np.float32))
+    return np.stack(frames), actions, np.stack(states)
+
+
+def _save_dataset(
+    out_path: Path,
+    *,
+    frames: np.ndarray,
+    actions: np.ndarray,
+    positions: np.ndarray,
+    layouts: np.ndarray,
+    grid,
+    frame_stack: int,
+    **extra,
+) -> None:
+    """Common npz schema consumed by :class:`TransitionWindows` and the probes."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(
+        out_path,
+        frames=frames,
+        actions=actions,
+        positions=positions,
+        layouts=layouts,
+        grid=grid,
+        frame_stack=frame_stack,
+        **extra,
+    )
+
+
 def generate_dataset(env_cfg: EnvConfig, data_cfg: DataConfig, out_path: Path) -> dict:
     """Roll exploration trajectories and save them to ``out_path`` (.npz)."""
     rng = np.random.default_rng(data_cfg.seed)
     n, t = data_cfg.n_trajectories, data_cfg.traj_len
-    size = env_cfg.img_size
-    frames = np.zeros((n, t + 1, size, size, 3), dtype=np.uint8)
-    actions = np.zeros((n, t, 2), dtype=np.float32)
-    positions = np.zeros((n, t + 1, 2), dtype=np.float32)
+    frames, actions, positions = _alloc_trajectory_arrays(
+        n, t, env_cfg.img_size, state_dim=2
+    )
     layouts = np.zeros(n, dtype=np.int64)
+
+    def ou_action(a: np.ndarray) -> np.ndarray:
+        a = a + data_cfg.ou_theta * (-a) + data_cfg.ou_sigma * rng.normal(size=2)
+        return np.clip(a, -1, 1)
 
     envs = {
         s: PointMazeEnv(env_cfg.shifted(layout_seed=s)) for s in data_cfg.layout_seeds
@@ -48,19 +107,11 @@ def generate_dataset(env_cfg: EnvConfig, data_cfg: DataConfig, out_path: Path) -
         env = envs[layout]
         env.reset(seed=int(rng.integers(1 << 31)))
         layouts[i] = layout
-        frames[i, 0] = env.render_frame()
-        positions[i, 0] = env.pos
-        a = rng.uniform(-1, 1, size=2)
-        for k in range(t):
-            a = a + data_cfg.ou_theta * (-a) + data_cfg.ou_sigma * rng.normal(size=2)
-            a = np.clip(a, -1, 1)
-            _, info = env.step(a)
-            actions[i, k] = a
-            frames[i, k + 1] = info.frame
-            positions[i, k + 1] = info.pos
+        frames[i], actions[i], positions[i] = _roll_trajectory(
+            env, t, rng, ou_action, env.pos
+        )
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(
+    _save_dataset(
         out_path,
         frames=frames,
         actions=actions,
@@ -93,10 +144,9 @@ def generate_pushobj_dataset(
     """
     rng = np.random.default_rng(data_cfg.seed)
     n, t = data_cfg.n_trajectories, data_cfg.traj_len
-    size = env_cfg.img_size
-    frames = np.zeros((n, t + 1, size, size, 3), dtype=np.uint8)
-    actions = np.zeros((n, t, 2), dtype=np.float32)
-    positions = np.zeros((n, t + 1, 5), dtype=np.float32)
+    frames, actions, positions = _alloc_trajectory_arrays(
+        n, t, env_cfg.img_size, state_dim=5
+    )
     shape_ids = np.zeros(n, dtype=np.int64)
     shape_names = list(data_cfg.shapes)
 
@@ -112,40 +162,36 @@ def generate_pushobj_dataset(
         # that never touch the block get hallucinated block motion.
         pure_ou = rng.random() < 0.3
         toward = 0.0 if pure_ou else float(rng.uniform(0.35, 0.7))
+
+        def seek_action(a: np.ndarray) -> np.ndarray:
+            return env.explore_action(a, rng, toward=toward)
+
         for attempt in range(data_cfg.max_retries):
             env.reset(seed=int(rng.integers(1 << 31)))
             start = env.state()
-            traj_frames = [env.render_frame()]
-            traj_states = [start]
-            traj_actions = np.zeros((t, 2), dtype=np.float32)
-            a = rng.uniform(-1, 1, size=2)
-            for k in range(t):
-                a = env.explore_action(a, rng, toward=toward)
-                _, info = env.step(a)
-                traj_actions[k] = a
-                traj_frames.append(info.frame)
-                traj_states.append(info.pos)
+            traj_frames, traj_actions, traj_states = _roll_trajectory(
+                env, t, rng, seek_action, start
+            )
             moved = float(np.linalg.norm(env.state()[2:4] - start[2:4]))
             if pure_ou or moved >= data_cfg.min_block_motion \
                     or attempt == data_cfg.max_retries - 1:
                 if moved >= data_cfg.min_block_motion:
                     contact_rich += 1
                 break
-        frames[i] = np.stack(traj_frames)
+        frames[i] = traj_frames
         actions[i] = traj_actions
-        positions[i] = np.stack(traj_states)
+        positions[i] = traj_states
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(
+    _save_dataset(
         out_path,
         frames=frames,
         actions=actions,
         positions=positions,
         layouts=shape_ids,  # schema parity with the maze npz
-        shape_ids=shape_ids,
-        shapes=np.array(shape_names),
         grid=env_cfg.world,
         frame_stack=env_cfg.frame_stack,
+        shape_ids=shape_ids,
+        shapes=np.array(shape_names),
         env_kind="pushobj",
     )
     return {

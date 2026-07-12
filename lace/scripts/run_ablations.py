@@ -1,4 +1,4 @@
-"""E3 / E5 / E6 ablation runners for the LovelaceJEPA paper.
+"""E3 / E5 / E6 ablation runners for the LACE paper.
 
 Run from ``adajepa/`` (imports the adajepa package):
 

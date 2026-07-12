@@ -126,7 +126,7 @@ def _base_adapt_cfg(args) -> AdaptConfig:
 
 
 def make_arm(name: str, base: AdaptConfig) -> AdaptConfig | None:
-    """Named arms for the LovelaceJEPA suites (unlaced = AdaJEPA baseline)."""
+    """Named arms for the LACE suites (unlaced = AdaJEPA baseline)."""
     from dataclasses import replace
 
     if name == "frozen":

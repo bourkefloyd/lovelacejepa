@@ -1,19 +1,14 @@
-# LovelaceJEPA / LACE
+# LACE paper materials
 
-Code, experiments, and paper for **"LovelaceJEPA: Online Encoder Adaptation by
-Learning Anchored Consistent Embeddings (LACE)"**.
+Everything paper-specific for **"LACE: Online Encoder Adaptation by
+Learning Anchored Consistent Embeddings"** - see the
+[root README](../README.md) for the method overview and results.
 
-> AdaJEPA's test-time adaptation target `sg(E_student(o_t+1))` comes from the
-> adapting encoder itself, so adaptation can reduce prediction error by
-> relocating the latent space - silently breaking every frozen consumer (goal
-> embeddings, success/progress heads, the planner's cost). LACE replaces the
-> target with `E_frozen(o_t+1)` from a frozen (or slow-EMA) copy of the
-> pretrained encoder, anchoring adaptation to the pretrained manifold.
-
-The method implementation lives in the sibling AdaJEPA reproduction
+The method implementation lives in the sibling testbed
 ([../adajepa](../adajepa)): `tta.py` (`target_source` knob + anchored goal
 encoding), `probes.py` (frozen probe heads), `pushobj.py` (PushObj-mini
-benchmark). This directory holds everything paper-specific.
+benchmark). This directory holds the pre-registered gates, result JSONs,
+figure/ablation scripts, and the LaTeX source.
 
 ## Layout
 

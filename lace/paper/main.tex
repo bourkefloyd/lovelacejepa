@@ -10,19 +10,28 @@
 \usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
 \usepackage[numbers]{natbib}
 \usepackage{caption}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
 \captionsetup{font=small,labelfont=bf}
 
+% Nine figures over nine pages: loosen float limits so each stays near its
+% section instead of queueing up behind the references.
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.85}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{4}
+
 \newcommand{\lace}{\textsc{LACE}}
-\newcommand{\lovelace}{LovelaceJEPA}
 \newcommand{\sg}{\mathrm{sg}}
 \newcommand{\Estud}{E_{\theta}}
 \newcommand{\Efroz}{E_{\bar\theta}}
 
-\title{\lovelace: Online Encoder Adaptation by\\
+\title{\lace{}: Online Encoder Adaptation by\\
 Learning Anchored Consistent Embeddings}
 
 \author{%
-  Bourke Floyd IV\\
+  C.H. Bourke Floyd IV\\
   Independent Researcher\\
   \texttt{chbfiv@gmail.com}
 }
@@ -61,11 +70,6 @@ which we isolate with parameter-subset ablations.
 \section{Introduction}
 \label{sec:intro}
 
-\begin{quote}\small\emph{``The Analytical Engine has no pretensions whatever
-to originate anything. It can do whatever we know how to order it to
-perform.''} --- Ada Lovelace, Note G (1843)
-\end{quote}
-
 Latent world models paired with model-predictive control (MPC) act by
 imagining futures: an encoder $E$ maps observations to latents, a predictor
 $f$ rolls latents forward under actions, and a planner selects the action
@@ -87,13 +91,16 @@ planning success lost to dynamics, visual, and geometry shifts.
 
 This paper starts from a deployment observation that complicates the story.
 Equation~\eqref{eq:adajepa} is \emph{self-referential}: the target is produced
-by the very encoder being adapted. Nothing in the objective prefers ``model
+by the very encoder being adapted (the stop-gradient prevents collapse, not
+this --- the target merely lags the student by one update). Nothing in the
+objective prefers ``model
 the new dynamics'' over ``move the latent space somewhere easier to
 predict.'' The loss cannot see the difference --- but every frozen consumer of
 the latent space can. Goal latents drift although the goal observation never
 changes; frozen success/progress heads receive off-manifold inputs; the
 planning cost is evaluated in a space that no longer means what it meant at
-calibration time. Running the published recipe on a deployed
+calibration time. Figure~\ref{fig:hook} shows the failure in a single
+controlled episode. Running the published recipe on a deployed
 screen-interaction agent (Section~\ref{sec:swm}), adaptation reduced
 second-half prediction divergence by 45\% --- and dropped the deployed
 success detector's AUC from 0.933 to 0.826. The standard defense is to adapt
@@ -102,6 +109,20 @@ more slowly than the predictor (AdaJEPA uses $\eta_{\text{enc}} = 10^{-5}$ vs
 $\eta_{\text{pred}} = 5\times10^{-4}$), which limits but does not remove the
 damage, and sacrifices adaptation capacity exactly where visual shifts need
 it.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/hook_episode.pdf}
+\caption{The failure, in one episode. PointMaze under the dark visual
+shift; every arm gets the identical maze, start (white dot), and goal
+(star). The frozen model mispredicts and stalls. Self-referential
+adaptation (unlaced) reduces its own prediction loss, but re-encoding the
+\emph{unchanged} goal image places it somewhere new at every replanning
+step (right) --- the planner chases a moving target and fails. Anchored
+adaptation (\lace{}) adapts under the same recipe with zero goal drift and
+reaches the goal.}
+\label{fig:hook}
+\end{figure}
 
 Our fix is deliberately minimal. \lace{} (Learning Anchored Consistent
 Embeddings) changes one symbol in Equation~\eqref{eq:adajepa}: the target
@@ -117,9 +138,8 @@ comes from a \emph{frozen} copy of the pretrained encoder,
 adapt at full strength: any relocation of the latent space is penalized
 because the target stays put. A corollary falls out for free: the goal should
 be encoded by the anchor, pinning the planner's cost landscape to the space
-its consumers were calibrated on. We call the resulting model \lovelace{},
-because its adaptation ``has no pretensions to originate anything'': it may
-only re-express the pretrained representation, never invent a new one.
+its consumers were calibrated on. Under \lace{}, adaptation may only
+re-express the pretrained representation, never invent a new one.
 
 \textbf{Contributions.}
 (1)~We identify and name the \emph{head-consistency failure} of
@@ -223,13 +243,75 @@ space.
 
 \subsection{\lace: anchor the target, anchor the goal}
 
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={draw=black!60, rounded corners=2pt, minimum height=1.9em,
+              minimum width=2.6em, inner sep=4pt},
+  stud/.style={box, fill=red!8, draw=red!55!black},
+  anch/.style={box, fill=teal!10, draw=teal!55!black},
+  arr/.style={-stealth, semithick},
+  lab/.style={font=\scriptsize, inner sep=1.5pt, fill=white},
+]
+\node[box] (ot) at (0, 0) {$o_t$};
+\node[stud] (enc) at (1.9, 0) {$\Estud$};
+\node[box] (f) at (4.1, 0) {$f(\cdot, a_t)$};
+\node[draw=black!60, circle, inner sep=2.5pt] (loss) at (9.4, -1.1) {$\mathcal{L}$};
+\node[box] (ot1) at (0, -2.2) {$o_{t+1}$};
+\node[stud] (senc) at (2.6, -1.5) {$\sg(\Estud)$};
+\node[anch] (aenc) at (2.6, -2.9) {$\Efroz$};
+\draw[arr] (ot) -- (enc);
+\draw[arr] (enc) -- node[lab, above] {$z_t$} (f);
+\draw[arr] (f.east) -- node[lab, above, pos=0.35] {$\hat z_{t+1}$} (loss.north west);
+\draw[arr] (ot1.north) |- (senc.west);
+\draw[arr] (ot1.south) |- (aenc.west);
+\draw[arr, red!55!black, dashed] (senc.east) --
+  node[lab, above, pos=0.45, text=red!55!black]
+  {unlaced (Eq.~\ref{eq:adajepa}): target moves as $\theta$ adapts}
+  (loss.west);
+\draw[arr, teal!55!black] (aenc.east) --
+  node[lab, below, pos=0.45, text=teal!55!black]
+  {\lace{} (Eq.~\ref{eq:lace}): target pinned to the pretrained space}
+  (loss.south west);
+\draw[arr, black!55, dotted, shorten >=1pt] (loss.north) to[out=115,in=40]
+  node[lab, above, pos=0.5] {$\nabla$ one step per replan}
+  (enc.north);
+\node[anch, lab, anchor=west] (goal) at (7.4, -3.4)
+  {goal corollary: $z_g = \Efroz(o_g)$};
+\end{tikzpicture}
+\caption{One TTA step. The prediction branch (top) is shared; the two
+objectives differ only in who encodes the target. The self-referential
+target (red, dashed) blocks within-step gradients but is re-encoded by the
+updated student at every subsequent step, so the loss can still be reduced
+by relocating the latent space; the \lace{} anchor (teal) pins the target
+--- and, by the same logic, the goal latent --- to the pretrained space.}
+\label{fig:method}
+\end{figure}
+
 \lace{} replaces the stop-gradient student target with an \emph{anchor}
-encoder $\Efroz$:
+encoder $\Efroz$ (Figure~\ref{fig:method}):
 Equation~\eqref{eq:lace}, where $\bar\theta$ is either (a) the pretrained
 encoder weights, frozen (\textbf{laced-frozen}), or (b) a slow EMA
 $\bar\theta \leftarrow \tau\bar\theta + (1{-}\tau)\theta$
 (\textbf{laced-ema}). The anchor adds one encoder forward per adaptation step
 (the target branch already required one) and no planning-time cost.
+
+\emph{Why the stop-gradient is not enough.} AdaJEPA inherits $\sg$ from
+SimSiam-style pretraining as an anti-collapse stabilizer
+\citep{chen2021simsiam}, and against collapse it works: within one update no
+gradient flows through the target, so the loss cannot be reduced by pulling
+the target toward the prediction. But the target is re-encoded by the
+\emph{updated} student at every subsequent step --- $\sg(\Estud)$ is the
+student lagging one update behind, nothing more. Across steps the reference
+frame moves freely, and a coordinated relocation of the latent space still
+reduces the loss. Consistent with this reading,
+\citet{anonymous2026adajepa} report that removing the stop-gradient under
+their restricted recipe leaves planning performance similar: it guards
+against a failure (collapse) that their conservative recipe already
+suppresses, while the failure that matters here (relocation) passes through
+it untouched. The stop-gradient buys collapse safety; only the anchor buys a
+fixed reference frame.
 
 Two properties follow. \emph{Anchored consistency:} the student can only
 reduce the loss by predicting where the \emph{pretrained} encoder will place
@@ -241,9 +323,8 @@ with the adapting student (the AdaJEPA default) makes the planner chase a
 moving target: we measure the drift
 $\lVert z_g^{(t)} - z_g^{(0)} \rVert$ directly in Section~\ref{sec:e4}.
 
-The name is the method: adaptation that has ``no pretensions to originate
-anything.'' The student may learn new dynamics at full learning rate, but the
-meaning of the coordinates is inherited, not invented.
+The student may learn new dynamics at full learning rate, but the meaning of
+the coordinates is inherited, not invented.
 
 \section{Experiments}
 \label{sec:experiments}
@@ -322,17 +403,16 @@ drift (E4), symmetric learning rates (E3), and long-horizon deployment (E7).
 \end{figure}
 
 Across the maze suite (Figure~\ref{fig:e2maze}), the laced arms match or
-beat unlaced planning success in aggregate --- dynamics shifts: unlaced
-$90.0\%$, laced-frozen $88.3\%$, frozen $78.3\%$; visual shifts:
-laced-frozen $72.5\%$ vs unlaced $71.7\%$, frozen $66.7\%$; held-out
-layouts: laced-ema $44.4\%$ vs unlaced $45.6\%$, frozen $35.6\%$. With the
-gradient-descent planner on dynamics shifts the anchored arm is strongest
-($90.0\%$ vs $70.0\%$ unlaced, $73.3\%$ frozen): GD planning is more
-sensitive to the smoothness of the cost landscape, which the anchor
+beat unlaced planning success in aggregate --- dynamics: laced-frozen
+$88.3\%$ vs unlaced $90.0\%$ (frozen $78.3\%$); visual: $72.5\%$ vs
+$71.7\%$; held-out layouts: laced-ema $44.4\%$ vs unlaced $45.6\%$ (frozen
+$35.6\%$). With the gradient-descent planner on dynamics shifts the
+anchored arm is strongest ($90.0\%$ vs $70.0\%$ unlaced): GD planning is
+more sensitive to the smoothness of the cost landscape, which the anchor
 preserves. On PushObj-mini the planner operates near its noise floor
-(Section~\ref{sec:setup}; success $10$--$25\%$ everywhere), and per-arm
-differences are within error bars; we report the suite for completeness and
-lean on the maze and deployment data for the planning claims.
+(Section~\ref{sec:setup}), so per-arm differences are within error bars; we
+report the suite for completeness and lean on the maze and deployment data
+for the planning claims.
 
 \subsection{E3: symmetric learning rates and collapse safety}
 \label{sec:e3}
@@ -340,10 +420,10 @@ lean on the maze and deployment data for the planning claims.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/e3_lr_sweep.pdf}
-\caption{Symmetric-LR sweep on the high-damping shift. At
-$\eta_{\text{enc}}{=}10^{-3}$ the self-referential target collapses planning
-($33.3\%$, below the frozen baseline) while the anchored target keeps
-improving ($86.7\%$).}
+\caption{Symmetric-LR sweep on the high-damping shift; dashed line marks
+the frozen (no-TTA) baseline. At $\eta_{\text{enc}}{=}10^{-3}$ the
+self-referential target collapses planning ($33.3\%$, below frozen) while
+the anchored target keeps improving ($86.7\%$).}
 \label{fig:e3}
 \end{figure}
 
@@ -382,26 +462,44 @@ territory, is changing.
 \subsection{E5: low-data pretraining}
 \label{sec:e5}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.58\linewidth]{figures/e5_lowdata.pdf}
+\caption{Planning success on unseen PushObj shapes vs pretraining shape
+diversity $K$. Adaptation helps most where data is scarcest, and the
+anchored target keeps pace with the self-referential one.}
+\label{fig:e5}
+\end{figure}
+
 Sweeping pretraining shape diversity $K \in \{1,2,4\}$ on PushObj and
-evaluating on unseen shapes, adaptation helps most exactly where data is
-scarcest (unlaced $+$laced both lift $K{=}1,2$ success), consistent with
-AdaJEPA's data-compensation result; anchored and self-referential targets
-are again indistinguishable in success. Probe AUC in this regime is
-dominated by the quality of the pretrained representation itself
-(frozen-arm AUC falls from $0.96$ at $K{=}4$ to $0.67$ at $K{=}1$),
-so head-consistency comparisons at $K{=}1$ mostly measure the probes'
-failure to fit, not adaptation damage; we flag this as a limit of the probe
+evaluating on unseen shapes (Figure~\ref{fig:e5}), adaptation helps most
+exactly where data is scarcest --- both targets lift $K{=}1,2$ success,
+consistent with AdaJEPA's data-compensation result, and are again
+indistinguishable. Probe AUC in this regime is dominated by the pretrained
+representation itself (frozen-arm AUC falls from $0.96$ at $K{=}4$ to $0.67$
+at $K{=}1$), so head-consistency comparisons at $K{=}1$ mostly measure the
+probes' failure to fit, not adaptation damage --- a limit of the probe
 methodology at very low data.
 
 \subsection{E6: how slow must the anchor be?}
 \label{sec:e6}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/e6_ema_decay.pdf}
+\caption{EMA-decay sweep on unseen PushObj shapes. A fast anchor
+($\tau{=}0.9$) is self-reference in slow motion; $\tau{=}0.996$ and the
+frozen anchor ($\tau{=}1.0$) preserve both planning success and head
+consistency.}
+\label{fig:e6}
+\end{figure}
+
 Sweeping the EMA decay $\tau \in \{0.9, 0.996, 1.0\}$ on unseen PushObj
-shapes: a fast anchor ($\tau{=}0.9$) is self-reference in slow motion ---
-probe AUC falls to $0.68$ and planning success to $5\%$ --- while
-$\tau{=}0.996$ and the frozen anchor hold AUC at $0.85$--$0.91$. Consistency
-requires the anchor to move at most negligibly over the horizon on which
-downstream consumers were calibrated; when in doubt, freeze it.
+shapes (Figure~\ref{fig:e6}): a fast anchor ($\tau{=}0.9$) is
+self-reference in slow motion --- probe AUC falls to $0.68$ and planning
+success to $5\%$ --- while $\tau{=}0.996$ and the frozen anchor hold AUC at
+$0.85$--$0.91$. The anchor must move at most negligibly over the horizon on
+which downstream consumers were calibrated; when in doubt, freeze it.
 
 \subsection{E7: deployed screen-interaction agent}
 \label{sec:swm}
@@ -477,33 +575,15 @@ step count, learning rate, and encoder participation.
 \section*{Reproducibility statement}
 All environments, training, adaptation, evaluation, probes, and figures are
 released with exact seeds and one-command reproduction scripts at
-\url{https://github.com/bourkefloyd/lovelacejepa}. The
+\url{https://github.com/bourkefloyd/lace-tta}. The
 deployment replay data is proprietary telemetry and is not released; we
 report aggregate metrics only, and the public benchmarks reproduce the
 phenomenon end-to-end.
 
 \section*{Acknowledgments}
-We thank the AdaJEPA authors for a reproducible and clearly written method,
-and Ada Lovelace for the epigraph and the acronym.\footnote{\lace{}: Learning
-Anchored Consistent Embeddings. The model is \lovelace{} because it is an
-Ada-JEPA that refuses to originate anything.}
+We thank the AdaJEPA authors for a reproducible and clearly written method.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}
-
-\appendix
-
-\section{Environment details}
-\label{app:env}
-% Shape cell definitions, physics constants, data-gen parameters,
-% oracle-solvability calibration table.
-
-\section{Probe training details}
-\label{app:probes}
-% Pair sampling, architectures, fit quality on pretrained latents.
-
-\section{Full result tables}
-\label{app:tables}
-% Per-shift tables with all arms, seeds, and gate verdicts (pass/fail).
 
 \end{document}

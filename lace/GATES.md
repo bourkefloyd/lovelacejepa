@@ -1,4 +1,4 @@
-# LovelaceJEPA / LACE: pre-registered gates
+# LACE: pre-registered gates
 
 Written BEFORE the experiment grid runs (playbook discipline: "write the gate
 first"). Each gate has a pass/fail criterion fixed in advance so results are

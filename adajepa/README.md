@@ -1,22 +1,24 @@
 # AdaJEPA reproduction (arXiv 2606.32026)
 
-An isolated, self-contained reproduction of **"AdaJEPA: An Adaptive Latent
-World Model"** (Wang, Bounou, LeCun, Ren - NYU, 2026): a JEPA world model that
-is *adapted at test time* inside the closed loop of MPC. After each executed
-action chunk, the observed transition `(o_t, a_t, o_{t+1})` provides a
-self-supervised latent prediction target; one gradient step on a small
-parameter subset recalibrates the model before the next replan.
+The controlled testbed for the **LACE** paper (see the
+[root README](../README.md)): a self-contained reproduction of **"AdaJEPA: An
+Adaptive Latent World Model"** (Wang, Bounou, LeCun, Ren - NYU, 2026), plus
+the LACE anchoring knob. In AdaJEPA, a JEPA world model is *adapted at test
+time* inside the closed loop of MPC: after each executed action chunk, the
+observed transition `(o_t, a_t, o_{t+1})` provides a self-supervised latent
+prediction target, and one gradient step on a small parameter subset
+recalibrates the model before the next replan.
 
-**Isolation**: this directory imports nothing from `lab/` or `backend/` - it
-is a standalone research area intended to back its own paper. The environments
-are a from-scratch numpy PointMaze (no MuJoCo/gym) and a miniature pymunk
-PushObj (pusher + polyomino block), and the world model is a miniature JEPA
-(1.2M params) that trains in minutes on Apple MPS.
+Everything here is from scratch and miniature: a numpy PointMaze (no
+MuJoCo/gym), a pymunk PushObj (pusher + polyomino block), and a 1.2M-param
+JEPA world model that trains in minutes on Apple MPS.
 
-This reproduction also hosts the **LovelaceJEPA / LACE** extensions
-(`../lace/`): frozen probe heads (`probes.py`), the anchored adaptation
-target (`tta.py: target_source=student|frozen|ema`), and the named arms
-`frozen / unlaced / laced-frozen / laced-ema` in `eval --arms`.
+The LACE method lives in this package as a single knob, so the baseline and
+the fix share every other line of code: the anchored adaptation target
+(`tta.py: target_source=student|frozen|ema`), frozen probe heads
+(`probes.py`), and the named arms `frozen / unlaced / laced-frozen /
+laced-ema` in `eval --arms`. Everything paper-specific (gates, run JSONs,
+figures, LaTeX) is in [../lace/](../lace/).
 
 ## Claims under test (mapped from the paper)
 

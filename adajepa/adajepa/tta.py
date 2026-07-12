@@ -9,11 +9,13 @@ updating only a small parameter subset. Weights are episode-local: build one
 adapter per episode on a fresh model copy; nothing is written back to the
 checkpoint.
 
-``target_source`` selects TARGET (the LovelaceJEPA/LACE knob):
+``target_source`` selects TARGET (the LACE knob):
 
 - ``student`` (AdaJEPA, the paper): ``sg(E_theta(o_{i+1}))`` - the target is
-  produced by the very encoder being adapted, so adaptation may reduce the
-  loss by relocating the latent space itself ("unlaced").
+  produced by the very encoder being adapted. The stop-gradient only blocks
+  within-step gradients (anti-collapse); the target is re-encoded by the
+  updated student at every subsequent step, so adaptation may still reduce
+  the loss by relocating the latent space itself ("unlaced").
 - ``frozen`` (LACE): ``E_frozen(o_{i+1})`` - a frozen copy of the pretrained
   encoder anchors adaptation to the pretrained manifold ("laced-frozen").
 - ``ema`` (LACE): a slow exponential-moving-average copy of the adapting
@@ -82,7 +84,7 @@ class AdaptConfig:
     steps: int = 1
     buffer_size: int = 5
     target: str = "predlast+enclast"
-    # --- LACE (LovelaceJEPA) knobs -----------------------------------------
+    # --- LACE knobs ---------------------------------------------------------
     target_source: str = "student"  # "student" (AdaJEPA) | "frozen" | "ema"
     ema_decay: float = 0.996  # only used when target_source == "ema"
     # Which encoder embeds the GOAL each replan: "model" re-encodes with the
